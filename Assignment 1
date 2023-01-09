@@ -1,0 +1,93 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from pathlib import Path
+
+tags = np.array(['A', 'B', 'm', 'n', 'Φ', 'Ψ'])
+# inputs = np.zeros(tags.size)
+test_inputs = np.array([1, 3, 1, 0.5, np.pi / 4, np.pi / 3])
+inputs = test_inputs
+resolution = 1000
+
+
+def values():
+    global tags, inputs
+    for r in range(tags.size):
+        inputs[r] = float(input('Input ' + tags[r] + ' value: '))
+        while True:
+            print(tags[r] + ' entered as ' + str(inputs[r]))
+            ans = str(input('Is this correct? (Y/N): ')).lower()
+            if ans == 'y':
+                break
+            elif ans == 'n':
+                inputs[r] = float(input('Input new ' + tags[r] + ' value: '))
+            else:
+                continue
+
+
+def plotting():
+    global resolution, inputs
+    while True:
+        ans = str(input('Contour (C), Linear (L), or End (E): ')).lower()
+        if ans == 'c':
+            x_min = float(input('X Minimum: '))
+            x_max = float(input('X Maximum: '))
+            y_min = float(input('Y Minimum: '))
+            y_max = float(input('Y Maximum: '))
+            x = np.empty([resolution, resolution])
+            y = np.empty([resolution, resolution])
+            z = np.empty([resolution, resolution])
+            for r in range(resolution):
+                x[r] = np.linspace(x_min, x_max, num=resolution)
+                y[r] = np.linspace(y_min, y_max, num=resolution)
+            y = np.rot90(y, 3)
+            for i in range(x.shape[0]):
+                for j in range(x.shape[1]):
+                    z[i, j] = (inputs[0] * np.sin((inputs[3] * np.pi * x[i, j]) + inputs[4]))\
+                              + (inputs[1] * np.sin((inputs[2] * np.pi * y[i, j]) + inputs[5]))
+            plt.contourf(x, y, z, 20, cmap='RdGy')
+            plt.colorbar()
+            name = 'Contour.svg'
+            plt.savefig(name)
+            print('Saved as {} in {}'.format(name, Path.cwd()))
+            plt.show()
+        elif ans == 'l':
+            while True:
+                ans0 = str(input('Horizontal (H) or Vertical (V) Plot: ')).lower()
+                if ans0 == 'h':
+                    y_con = float(input('Constant Y Value: '))
+                    x_min = float(input('X Minimum Value: '))
+                    x_max = float(input('X Maximum Value: '))
+                    x = np.linspace(x_min, x_max, num=resolution)
+                    y = np.empty(resolution)
+                    for r in range(y.size):
+                        y[r] = (inputs[0] * np.sin((inputs[3] * np.pi * x[r]) + inputs[4]))\
+                              + (inputs[1] * np.sin((inputs[2] * np.pi * y_con) + inputs[5]))
+                    plt.plot(x, y)
+                    name = 'Horizontal.svg'
+                    plt.savefig(name)
+                    print('Saved as {} in {}'.format(name, Path.cwd()))
+                    plt.show()
+                elif ans0 == 'v':
+                    x_con = float(input('Constant X Value: '))
+                    y_min = float(input('Y Minimum Value: '))
+                    y_max = float(input('Y Maximum Value: '))
+                    y = np.linspace(y_min, y_max, num=resolution)
+                    x = np.empty(resolution)
+                    for r in range(y.size):
+                        x[r] = (inputs[0] * np.sin((inputs[3] * np.pi * y[r]) + inputs[4]))\
+                              + (inputs[1] * np.sin((inputs[2] * np.pi * x_con) + inputs[5]))
+                    plt.plot(x, y)
+                    name = 'Vertical.svg'
+                    plt.savefig(name)
+                    print('Saved as {} in {}'.format(name, Path.cwd()))
+                    plt.show()
+                else:
+                    continue
+                break
+        elif ans == 'e':
+            return
+        else:
+            continue
+
+
+plotting()
