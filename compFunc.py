@@ -1,37 +1,44 @@
 import numpy as np
 import sys
 
-'''
+## module error
+''' 
     err(string).
-    Prints ’string’ and terminates program.
-    30 Introduction to Python
+    Prints 'string' and terminates program.
 '''
-
-
 def err(string):
     print(string)
     input('Press return to exit')
     sys.exit()
 
 
-'''
-    module swap
+## module swap
+''' 
     swapRows(v,i,j).
     Swaps rows i and j of a vector or matrix [v].
+    
     swapCols(v,i,j).
     Swaps columns of matrix [v].
+    
+    swapCramer(a, b, i).
+    Swaps i-th column of matrix [a] with array [b].
 '''
-
-
-def swapRows(v, i, j):
+def swapRows(v,i,j):
     if len(v.shape) == 1:
-        v[i], v[j] = v[j], v[i]
+        v[i],v[j] = v[j],v[i]
     else:
-        v[[i, j], :] = v[[j, i], :]
+        v[[i,j],:] = v[[j,i],:]
+    return
 
+def swapCols(v,i,j):
+    v[:,[i,j]] = v[:,[j,i]]
+    return
 
-def swapCols(v, i, j):
-    v[:, [i, j]] = v[:, [j, i]]
+def swapCramer(a, b, i):
+    import numpy as np
+    ai = a.copy()
+    ai[:, i] = np.transpose(b)
+    return ai
 
 
 '''
@@ -75,7 +82,7 @@ def gaussPivot(a, b, tol=1.0e-12):
 
 
 ''' 
-    a,seq = LUdecomp(a,tol=1.0e-9).
+    a,seq = LUpivot(a,tol=1.0e-9).
     LU decomposition of matrix [a] using scaled row pivoting.
     The returned matrix [a] = contains [U] in the upper
     triangle and the nondiagonal terms of [L] in the lower triangle.
@@ -87,7 +94,7 @@ def gaussPivot(a, b, tol=1.0e-12):
 '''
 
 
-def LUdecomp(a, tol=1.0e-9):
+def LUpivot(a, tol=1.0e-9):
     n = len(a)
     seq = np.array(range(n))
 
@@ -130,6 +137,31 @@ def LUsolve(a, b, seq):
     for k in range(n - 2, -1, -1):
         x[k] = (x[k] - np.dot(a[k, k + 1:n], x[k + 1:n])) / a[k, k]
     return x
+
+## module LUdecomp
+'''
+    a = LUdecomp(a)
+    LUdecomposition: [L][U] = [a]
+    x = LUsolve(a,b)
+    Solution phase: solves [L][U]{x} = {b}
+'''
+def LUdecomp(a):
+    n = len(a)
+    for k in range(0,n-1):
+        for i in range(k+1,n):
+            if a[i,k] != 0.0:
+                lam = a [i,k]/a[k,k]
+                a[i,k+1:n] = a[i,k+1:n] - lam*a[k,k+1:n]
+                a[i,k] = lam
+    return a
+def LUsolve_decomp(a,b):
+    n = len(a)
+    for k in range(1,n):
+        b[k] = b[k] - np.dot(a[k,0:k],b[0:k])
+    b[n-1] = b[n-1]/a[n-1,n-1]
+    for k in range(n-2,-1,-1):
+        b[k] = (b[k] - np.dot(a[k,k+1:n],b[k+1:n]))/a[k,k]
+    return b
 
 '''
     Cramer Function returns 

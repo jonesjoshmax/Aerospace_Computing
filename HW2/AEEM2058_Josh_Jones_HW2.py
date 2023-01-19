@@ -2,6 +2,7 @@ import numpy as np
 import compFunc as cf
 import time
 import random as r
+import matplotlib.pyplot as plt
 
 
 def ab_refresh(a, b):
@@ -101,7 +102,42 @@ def part4():
 
         # LU Function
 
-    return runtime, validation
+    return runtime, validation, cycles
+
+
+def prob4_visualization(runtime, validation, cycles):
+    matrix = runtime
+    name = 'Runtime'
+    for i in range(2):
+        x = np.arange(len(cycles))
+        width = .25
+        fig, ax = plt.subplots()
+        cr = ax.bar(x - width, matrix[0, :], width, label='Cramer', color='tomato')
+        ga = ax.bar(x, matrix[1, :], width, label='Gauss', color='bisque')
+        lu = ax.bar(x + width, matrix[2, :], width, label='LU', color='lightskyblue')
+        ax.set_xlabel('N x N Matrix')
+        ax.set_ylabel(name)
+        ax.set_xticks(x, cycles)
+        ax.legend()
+        ax.set_title('{} of N x N Matrices'.format(name), weight='bold')
+        ax.bar_label(cr, padding=2)
+        ax.bar_label(ga, padding=2)
+        ax.bar_label(lu, padding=2)
+        fig.tight_layout()
+        plt.show()
+        matrix = validation
+        name = 'Residual Value'
+
+
+def part5():
+    prob8_array = np.array([
+        [0, 2, 5, -1],
+        [2, 1, 3, 0],
+        [-2, -1, 3, 1],
+        [3, 3, -1, 2]
+    ])
+    prob8_inverse = matrixInverse(prob8_array)
+    print(np.round(np.dot(prob8_inverse, prob8_array)))
 
 
 def lu_testing():
@@ -117,22 +153,9 @@ def lu_testing():
     b = np.array([[0], [12], [-5], [3], [-25], [-26], [9], [-7]])
     b = b * -1
 
-    a_ref, b_ref = ab_refresh(a, b)
-    a0, seq = cf.LUdecomp(a_ref)
-    x = cf.LUsolve(a0, b_ref, seq)
+    a0 = cf.LUdecomp(a.copy())
+    x = cf.LUsolve_decomp(a0.copy(), b.copy())
 
     return x
 
-
-def part5():
-    prob8_array = np.array([
-        [0, 2, 5, -1],
-        [2, 1, 3, 0],
-        [-2, -1, 3, 1],
-        [3, 3, -1, 2]
-    ])
-    prob8_inverse = matrixInverse(prob8_array)
-    print(np.round(np.dot(prob8_inverse, prob8_array)))
-
-
-part5()
+\
