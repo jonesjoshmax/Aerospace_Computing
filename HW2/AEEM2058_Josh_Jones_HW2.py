@@ -6,26 +6,27 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def ab_refresh(a, b):
-    a_ref = np.copy(a)
-    b_ref = np.copy(b)
-    return a_ref, b_ref
-
-
+# Matrix Inversion Module
 def matrixInverse(a):
+    # Creates new matrix of same size
     ai = np.empty(np.shape(a))
+    # Nested for loop to add values for each adjoined values
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
+            # Deletes current row / col and then gets -1 ^ (i +j) times determinate of what remains
             a_ref = np.copy(a)
             a_ref = np.delete(a_ref, i, 0)
             a_ref = np.delete(a_ref, j, 1)
             ai[i, j] = pow(-1, (i + j)) * np.linalg.det(a_ref)
+    # Transposes and then scales matrix to proper values
     ai = np.transpose(ai)
     ai = (1 / np.dot(ai, a)[0, 0]) * ai
     return ai
 
 
+# Code for part 3 of homework
 def part3():
+    # Empty array to store future timing and accuracy values
     rt_Val = np.empty((3, 2))
     # Given arrays from problem 11
     a = np.array([
@@ -38,11 +39,17 @@ def part3():
         [-1, 4, -7, -1, 1, 1, -1, -3],
         [-1, 3, 4, 1, 3, -4, 7, 6]])
     b = np.array([[0], [12], [-5], [3], [-25], [-26], [9], [-7]])
+    # Flipped signs for b vector
     b = b * -1
+    # Define datatype because LU function wont work unless float
     a = a.astype('float64')
     b = b.astype('float64')
 
     # Cramer Calculation
+    # t0 & t call time values
+    # v calculates residual vector and sums values from within
+    # t and v values are stored for table creation
+    # same idea with Gauss and LU, just different solvers
     t0 = time.perf_counter()
     x = cf.cramer(a.copy(), b.copy())
     t = time.perf_counter() - t0
@@ -67,29 +74,39 @@ def part3():
     rt_Val[2, 0] = t * 1000000
     rt_Val[2, 1] = v
 
+    # Creating a dataFrame from pandas to create table
     data = {'Runtime (microseconds)': [rt_Val[0, 0], rt_Val[1, 0], rt_Val[2, 0]],
             'Accuracy': [rt_Val[0, 1], rt_Val[1, 1], rt_Val[2, 1]]
             }
+    # Tabled values with relevant indexes for left hand side
     df = pd.DataFrame(data, index=['Cramer', 'Gauss', 'LU'])
     print(df)
 
 
+# Code for part 4
 def part4():
+    # Cycles stores N for N x N matrices
     cycles = [2, 4, 6, 8, 12]
+    # Empty arrays size of cycles for data storage and then future plotting
     runtime = np.empty((3, len(cycles))).astype('float64')
     validation = np.copy(runtime)
     # Array creation / loop for testing
     for h in range(len(cycles)):
         n = cycles[h]
+        # Empty array size of current N value from cycle, and proper sized b vector
         a = np.empty([n, n])
         b = np.empty(n)
+        # Nested for loop that puts a random int value at each location for new matrices
         for i in range(n):
             for j in range(n):
                 a[i, j] = r.randint(-15, 15)
             b[i] = r.randint(-15, 15)
+        # Flips from row to column vector
         b = b.reshape((n, 1))
 
         # Cramer Calculation
+        # Same as in part 3
+        # Except now the stored values are going to dynamic locations instead of static
         t0 = time.perf_counter()
         x = cf.cramer(a.copy(), b.copy())
         t = time.perf_counter() - t0
@@ -113,32 +130,43 @@ def part4():
         v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
         runtime[2, h] = t
         validation[2, h] = v
+
+    # Converting the run time values to microseconds
     runtime = runtime / 0.000001
 
     return runtime, validation, cycles
 
 
+# Part 4 code (plotting functions)
 def part4_visualization(runtime, validation, cycles):
+    # Creates even sized spacing for bar plot
     x = np.arange(len(cycles))
     width = .25
+    # Starting figure with plotting area ax
     fig, ax = plt.subplots()
+    # Creating bars and designating relative location / color / label
     cr = ax.bar(x - width, runtime[0, :], width, label='Cramer', color='tomato')
     ga = ax.bar(x, runtime[1, :], width, label='Gauss', color='bisque')
     lu = ax.bar(x + width, runtime[2, :], width, label='LU', color='lightskyblue')
+    # Create title, labels, legend, and bin ticks
     ax.set_xlabel('N x N Matrix')
     ax.set_ylabel('Runtime (microseconds)')
     ax.set_xticks(x, cycles)
     ax.legend()
     ax.set_title('Runtime of N x N Matrices', weight='bold')
+    # Labels bars to show run time in microseconds
     ax.bar_label(cr, padding=2)
     ax.bar_label(ga, padding=2)
     ax.bar_label(lu, padding=2)
     fig.tight_layout()
     plt.show()
+    # Creates another figure for accuracy with plotting area ax2
     fig2, ax2 = plt.subplots()
+    # Plots lines for the cramer, gauss, and lu accuracy
     ax2.plot(cycles, validation[0, :], label='Cramer', color='tomato', linewidth=3)
     ax2.plot(cycles, validation[1, :], label='Gauss', color='bisque', linewidth=3)
     ax2.plot(cycles, validation[2, :], label='LU', color='lightskyblue', linewidth=3)
+    # Creates title, labels, and legend
     ax2.set_xlabel('N x N Matrix')
     ax2.set_ylabel('Accuracy')
     ax2.set_title('Accuracy of N x N Matrix', weight='bold')
@@ -146,15 +174,20 @@ def part4_visualization(runtime, validation, cycles):
     plt.show()
 
 
+# Run function for part 5
 def part5():
+    # Given array in problem set
     prob8_array = np.array([
         [0, 2, 5, -1],
         [2, 1, 3, 0],
         [-2, -1, 3, 1],
         [3, 3, -1, 2]
     ])
+    # runs matrixInverse function stored at top of this file
     prob8_inverse = matrixInverse(prob8_array)
+    # Prints original matrix and inverse matrix
     print('Original Matrix:\n{}\nInverted Matrix:\n{}'.format(prob8_array, prob8_inverse))
+    # Prints identity matrix to show that it is the inverse
     print('Dot Product of Original & Inverted:\n{}'.format(np.round(np.dot(prob8_inverse, prob8_array))))
 
 
