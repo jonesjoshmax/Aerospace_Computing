@@ -154,7 +154,7 @@ def part5():
         [3, 3, -1, 2]
     ])
     prob8_inverse = matrixInverse(prob8_array)
-    print('Part 5\nOriginal Matrix:\n{}\nInverted Matrix:\n{}'.format(prob8_array, prob8_inverse))
+    print('Original Matrix:\n{}\nInverted Matrix:\n{}'.format(prob8_array, prob8_inverse))
     print('Dot Product of Original & Inverted:\n{}'.format(np.round(np.dot(prob8_inverse, prob8_array))))
 
 
