@@ -191,6 +191,7 @@ def part5():
     print('Dot Product of Original & Inverted:\n{}'.format(np.round(np.dot(prob8_inverse, prob8_array))))
 
 
+# Functions ran for submission
 part3()
 rt, valid, cyc = part4()
 part4_visualization(rt, valid, cyc)
