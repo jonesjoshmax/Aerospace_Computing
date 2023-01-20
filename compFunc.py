@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import sys
 
 ## module error
@@ -168,3 +169,63 @@ def cramer(m_ref, m_val):
         out[r] = np.linalg.det(m_clone) / a
     # Returns output for values calculated
     return out
+
+
+# iterEqs for gaussSeidel
+def iterEqs(x,omega):
+    n = len(x)
+    x[0] = omega*(x[1] - x[n-1])/2.0 + (1.0 - omega)*x[0]
+    for i in range(1,n-1):
+        x[i] = omega*(x[i-1] + x[i+1])/2.0 + (1.0 - omega)*x[i]
+    x[n-1] = omega*(1.0 - x[0] + x[n-2])/2.0 \
+        + (1.0 - omega)*x[n-1]
+    return x
+
+## module gaussSeidel
+'''
+    x,numIter,omega = gaussSeidel(iterEqs,x,tol = 1.0e-9)
+    Gauss-Seidel method for solving [A]{x} = {b}.
+    The matrix [A] should be sparse. User must supply the
+    function iterEqs(x,omega) that returns the improved {x},
+    given the current {x} (’omega’ is the relaxation factor).
+'''
+def gaussSeidel(iterEqs,x,tol = 1.0e-9):
+    omega = 1.0
+    k = 10
+    p=1
+    for i in range(1,501):
+        xOld = x.copy()
+        x = iterEqs(x,omega)
+        dx = math.sqrt(np.dot(x-xOld,x-xOld))
+        if dx < tol: return x,i,omega
+        # Compute relaxation factor after k+p iterations
+        if i == k: dx1 = dx
+        if i == k + p:
+            dx2 = dx
+            omega = 2.0/(1.0 + math.sqrt(1.0 \
+            - (dx2/dx1)**(1.0/p)))
+    print('Gauss-Seidel failed to converge')
+
+
+## module conjGrad
+'''
+    x, numIter = conjGrad(Av, x, b, tol=1.0e-9)
+    Conjugate gradient method for solving[A]{x} = {b}.
+    The matrix[A] should be sparse. User must supply the 
+    function Av(v)  that returns the vector[A] {v}.
+'''
+def conjGrad(Av, x, b, tol=1.0e-9):
+    n = len(b)
+    r = b - Av(x)
+    s = r.copy()
+    for i in range(n):
+        u = Av(s)
+        alpha = np.dot(s, r) / np.dot(s, u)
+        x = x + alpha * s
+        r = b - Av(x)
+        if (math.sqrt(np.dot(r, r))) < tol:
+            break
+        else:
+            beta = -np.dot(r, u) / np.dot(s, u)
+            s = r + beta * s
+    return x, i
