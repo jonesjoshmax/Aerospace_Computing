@@ -53,7 +53,7 @@ def part3():
     t0 = time.perf_counter()
     x = cf.cramer(a.copy(), b.copy())
     t = time.perf_counter() - t0
-    v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+    v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
     rt_Val[0, 0] = t * 1000000
     rt_Val[0, 1] = v
 
@@ -61,7 +61,7 @@ def part3():
     t0 = time.perf_counter()
     x = cf.gaussPivot(a.copy(), b.copy())
     t = time.perf_counter() - t0
-    v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+    v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
     rt_Val[1, 0] = t * 1000000
     rt_Val[1, 1] = v
 
@@ -70,7 +70,7 @@ def part3():
     a0, seq = cf.LUpivot(a.copy())
     x = cf.LUsolve(a0.copy(), b.copy(), seq.copy())
     t = time.perf_counter() - t0
-    v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+    v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
     rt_Val[2, 0] = t * 1000000
     rt_Val[2, 1] = v
 
@@ -113,7 +113,7 @@ def part4():
         t0 = time.perf_counter()
         x = cf.cramer(a.copy(), b.copy())
         t = time.perf_counter() - t0
-        v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+        v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
         runtime[0, h] = t
         validation[0, h] = v
 
@@ -121,7 +121,7 @@ def part4():
         t0 = time.perf_counter()
         x = cf.gaussPivot(a.copy(), b.copy())
         t = time.perf_counter() - t0
-        v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+        v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
         runtime[1, h] = t
         validation[1, h] = v
 
@@ -130,7 +130,7 @@ def part4():
         a0, seq = cf.LUpivot(a.copy())
         x = cf.LUsolve(a0.copy(), b.copy(), seq.copy())
         t = time.perf_counter() - t0
-        v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+        v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
         runtime[2, h] = t
         validation[2, h] = v
 
