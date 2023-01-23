@@ -3,8 +3,7 @@ import compFunc as cf
 import time
 
 
-def p17matrix():
-    n = 20
+def p17matrix(n):
     a = np.zeros((n, n)).astype('float64')
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
@@ -18,6 +17,7 @@ def p17matrix():
     for i in range(n):
         if i == n - 1:
             b[i, 0] = 100
+    return a, b
 
 
 def p19matrix():
@@ -35,7 +35,10 @@ def p19matrix():
                 a[i, j] = 1
 
 
-def part2(a, b):
+def part2():
+    # Matrix Formation for problem
+    n = 20
+    a, b = p17matrix(n)
 
     # Cramer Calculation
     t0 = time.perf_counter()
@@ -57,5 +60,7 @@ def part2(a, b):
     v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
 
     # Gauss Seidel Calculation
-
+    t0 = time.perf_counter()
+    x,
+    t = time.perf_counter() - t0
     # Conjugate Gradient Calculation

@@ -171,16 +171,6 @@ def cramer(m_ref, m_val):
     return out
 
 
-# iterEqs for gaussSeidel
-def iterEqs(x,omega):
-    n = len(x)
-    x[0] = omega*(x[1] - x[n-1])/2.0 + (1.0 - omega)*x[0]
-    for i in range(1,n-1):
-        x[i] = omega*(x[i-1] + x[i+1])/2.0 + (1.0 - omega)*x[i]
-    x[n-1] = omega*(1.0 - x[0] + x[n-2])/2.0 \
-        + (1.0 - omega)*x[n-1]
-    return x
-
 ## module gaussSeidel
 '''
     x,numIter,omega = gaussSeidel(iterEqs,x,tol = 1.0e-9)
@@ -206,6 +196,17 @@ def gaussSeidel(iterEqs,x,tol = 1.0e-9):
             - (dx2/dx1)**(1.0/p)))
     print('Gauss-Seidel failed to converge')
 
+## module Ax
+'''
+    Returns Ax(v) for conjGrad
+'''
+def Ax(v):
+    n = len(v)
+    Ax = np.zeros(n)
+    Ax[0] = 2.0*v[0] - v[1]+v[n-1]
+    Ax[1:n-1] = -v[0:n-2] + 2.0*v[1:n-1] -v[2:n]
+    Ax[n-1] = -v[n-2] + 2.0*v[n-1] + v[0]
+    return Ax
 
 ## module conjGrad
 '''
