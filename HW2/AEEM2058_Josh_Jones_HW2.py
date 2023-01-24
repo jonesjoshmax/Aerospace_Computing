@@ -6,24 +6,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-# Matrix Inversion Module
-def matrixInverse(a):
-    # Creates new matrix of same size
-    ai = np.empty(np.shape(a))
-    # Nested for loop to add values for each adjoined values
-    for i in range(a.shape[0]):
-        for j in range(a.shape[1]):
-            # Deletes current row / col and then gets -1 ^ (i +j) times determinate of what remains
-            a_ref = np.copy(a)
-            a_ref = np.delete(a_ref, i, 0)
-            a_ref = np.delete(a_ref, j, 1)
-            ai[i, j] = pow(-1, (i + j)) * np.linalg.det(a_ref)
-    # Transposes and then scales matrix to proper values
-    ai = np.transpose(ai)
-    ai = (1 / np.dot(ai, a)[0, 0]) * ai
-    return ai
-
-
 # Code for part 3 of homework
 def part3():
     # Empty array to store future timing and accuracy values
@@ -208,10 +190,11 @@ def part4_visualization(runtime, validation, cycles):
 def part5():
     # Given array in problem set
     prob8_array = np.array([
-        [0, 2, 5, -1],
-        [2, 1, 3, 0],
-        [-2, -1, 3, 1],
-        [3, 3, -1, 2]
+        [27.58, 7.004, -7.004, 0.0, 0.0],
+        [7.004, 29.570, -5.253, 0.0, -24.32],
+        [-7.004, -5.253, 29.57, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 27.580, -7.004],
+        [0.0, -24.32, 0.0, -7.004, 29.57]
     ]).astype('float64')
     # runs matrixInverse function stored at top of this file
     prob8_inverse = cf.matInv(prob8_array.copy())
