@@ -53,26 +53,38 @@ def part3():
     t0 = time.perf_counter()
     x = cf.cramer(a.copy(), b.copy())
     t = time.perf_counter() - t0
-    v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
+    v = np.dot(a.copy(), x) - b.copy()
+    v0 = 0
+    for i in range(np.size(v)):
+        v0 = v0 + pow(v[i], 2)
+    v0 = np.sqrt(v0)
     rt_Val[0, 0] = t * 1000000
-    rt_Val[0, 1] = v
+    rt_Val[0, 1] = v0
 
     # Gauss Calculation
     t0 = time.perf_counter()
     x = cf.gaussPivot(a.copy(), b.copy())
     t = time.perf_counter() - t0
-    v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
+    v = np.dot(a.copy(), x) - b.copy()
+    v0 = 0
+    for i in range(np.size(v)):
+        v0 = v0 + pow(v[i], 2)
+    v0 = np.sqrt(v0)
     rt_Val[1, 0] = t * 1000000
-    rt_Val[1, 1] = v
+    rt_Val[1, 1] = v0
 
     # LU Calculation
     t0 = time.perf_counter()
     a0, seq = cf.LUpivot(a.copy())
     x = cf.LUsolve(a0.copy(), b.copy(), seq.copy())
     t = time.perf_counter() - t0
-    v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
+    v = np.dot(a.copy(), x) - b.copy()
+    v0 = 0
+    for i in range(np.size(v)):
+        v0 = v0 + pow(v[i], 2)
+    v0 = np.sqrt(v0)
     rt_Val[2, 0] = t * 1000000
-    rt_Val[2, 1] = v
+    rt_Val[2, 1] = v0
 
     # Creating a dataFrame from pandas to create table
     data = {'Runtime (microseconds)': [rt_Val[0, 0], rt_Val[1, 0], rt_Val[2, 0]],
@@ -91,9 +103,9 @@ def part4():
     runtime = np.empty((3, len(cycles))).astype('float64')
     validation = np.copy(runtime)
     # Array creation / loop for testing
-    det = 0
-    while det == 0:
-        for h in range(len(cycles)):
+    a_m = 5
+    for h in range(len(cycles)):
+        while True:
             n = cycles[h]
             # Empty array size of current N value from cycle, and proper sized b vector
             a = np.empty([n, n])
@@ -101,11 +113,14 @@ def part4():
             # Nested for loop that puts a random int value at each location for new matrices
             for i in range(n):
                 for j in range(n):
-                    a[i, j] = r.randint(-15, 15)
-                b[i] = r.randint(-15, 15)
+                    a[i, j] = r.randint(-a_m, a_m)
+                b[i] = r.randint(-a_m, a_m)
             # Flips from row to column vector
-            b = b.reshape((n, 1))
-        det = np.linalg.det(a)
+            b = b.T
+            if np.linalg.det(a) == 0:
+                continue
+            elif np.linalg.det(a) != 0:
+                break
 
         # Cramer Calculation
         # Same as in part 3
@@ -113,26 +128,38 @@ def part4():
         t0 = time.perf_counter()
         x = cf.cramer(a.copy(), b.copy())
         t = time.perf_counter() - t0
-        v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
+        v = np.dot(a.copy(), x) - b.copy()
+        v0 = 0
+        for i in range(np.size(v)):
+            v0 = v0 + pow(v[i], 2)
+        v0 = np.sqrt(v0)
         runtime[0, h] = t
-        validation[0, h] = v
+        validation[0, h] = v0
 
         # Gauss Calculation
         t0 = time.perf_counter()
         x = cf.gaussPivot(a.copy(), b.copy())
         t = time.perf_counter() - t0
-        v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
+        v = np.dot(a.copy(), x) - b.copy()
+        v0 = 0
+        for i in range(np.size(v)):
+            v0 = v0 + pow(v[i], 2)
+        v0 = np.sqrt(v0)
         runtime[1, h] = t
-        validation[1, h] = v
+        validation[1, h] = v0
 
         # LU Calculation
         t0 = time.perf_counter()
         a0, seq = cf.LUpivot(a.copy())
         x = cf.LUsolve(a0.copy(), b.copy(), seq.copy())
         t = time.perf_counter() - t0
-        v = np.average(np.array(np.dot(a.copy(), x) - b.copy()))
+        v = np.dot(a.copy(), x) - b.copy()
+        v0 = 0
+        for i in range(np.size(v)):
+            v0 = v0 + pow(v[i], 2)
+        v0 = np.sqrt(v0)
         runtime[2, h] = t
-        validation[2, h] = v
+        validation[2, h] = v0
 
     # Converting the run time values to microseconds
     runtime = runtime / 0.000001
@@ -185,9 +212,9 @@ def part5():
         [2, 1, 3, 0],
         [-2, -1, 3, 1],
         [3, 3, -1, 2]
-    ])
+    ]).astype('float64')
     # runs matrixInverse function stored at top of this file
-    prob8_inverse = matrixInverse(prob8_array)
+    prob8_inverse = cf.matInv(prob8_array.copy())
     # Prints original matrix and inverse matrix
     print('Original Matrix:\n{}\nInverted Matrix:\n{}'.format(prob8_array, prob8_inverse))
     # Prints identity matrix to show that it is the inverse

@@ -171,6 +171,20 @@ def cramer(m_ref, m_val):
     return out
 
 
+## Matrix Inverse
+'''
+    Returns matrix inverse using
+    LUPivot rather than my own
+'''
+def matInv(a):
+    n = len(a[0])
+    aInv = np.identity(n)
+    a,seq = LUpivot(a)
+    for i in range(n):
+        aInv[:,i] = LUsolve(a,aInv[:,i],seq)
+    return aInv
+
+
 ## module gaussSeidel
 '''
     x,numIter,omega = gaussSeidel(iterEqs,x,tol = 1.0e-9)
