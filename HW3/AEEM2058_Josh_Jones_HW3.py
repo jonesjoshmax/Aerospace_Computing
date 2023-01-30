@@ -35,22 +35,35 @@ def cg17(v):
     Ax = np.zeros(n)
     Ax[0] = 4 * v[0] - v[1] + v[n - 1]
     Ax[1:n - 1] = -v[0:n - 2] + 4 * v[1:n - 1] - v[2:n]
-    Ax[n-1] = v[0] - v[n-2] + 4 * v[n-1]
+    Ax[n - 1] = v[0] - v[n - 2] + 4 * v[n - 1]
     return Ax
 
 
-def p19matrix(n):
-    a = np.zeros((n, n)).astype('float64')
-    for i in range(a.shape[0]):
-        for j in range(a.shape[1]):
-            if i == j:
-                a[i, j] = -4
-            elif i + 1 == j or j + 1 == i:
-                a[i, j] = 1
-            elif i + 3 == j or j + 3 == i:
-                a[i, j] = 1
-            elif (i == n - 1 and j == 0) or (i == 0 and j == n - 1):
-                a[i, j] = 1
+def p19mesh(t):
+    n = len(t)
+    Ax = np.zeros(n)
+    m = np.sqrt(n)
+    Ax[0] = -4 * t[0] + t[1] + t[m]
+    for k in range(1, m - 1):
+        Ax[k] = t[k - 1] - 4 * t[k] + t[k + 1] + t[k + m]
+    k = m - 1
+    Ax[k] = t[k - m] - 4 * t[m - 1] + t[2 * m - 1]
+    for i in range(1, m - 1):
+        k = i * m
+        Ax[k] = t[k - m] - 4 * t[k] + t[k + 1] + t[k + m]
+        for j in range(1, m - 1):
+            k = i * m + j
+            Ax[k] = t[k - m] + t[k - 1] - 4 * t[k] + t[k + m]
+        k = (i + 1) * m - 1
+        Ax[k] = t[k - m] + t[k - 1] - 4 * t[k] + t[k + m]
+        k = (m - 1) * m
+        Ax[k] = t[k - m] - 4 * t[k] + t[k + 1]
+        for j in range(1, m - 1):
+            k = (m - 1) * m + j
+            Ax[k] = t[k - m] + t[k - 1] - 4 * t[k] + t[k + 1]
+        k = pow(m, 2) - 1
+        Ax[k] = t[k - m] + t[k - 1] - 4 * t[k]
+    return Ax
 
 
 def part2():
@@ -92,7 +105,7 @@ def part2():
     t0 = time.perf_counter()
     x = np.zeros(n)
     b1 = np.zeros(n)
-    b1[n-1] = 100
+    b1[n - 1] = 100
     x, numIter = cf.conjGrad(cg17, x, b1.copy())
     data[0, 4] = time.perf_counter() - t0
     x = x.reshape([n, 1])
@@ -120,5 +133,7 @@ def part2visualization(data):
     plt.show()
 
 
-o = part2()
-part2visualization(o)
+# o = part2()
+# part2visualization(o)
+
+cf.conjGrad(p19mesh, )
