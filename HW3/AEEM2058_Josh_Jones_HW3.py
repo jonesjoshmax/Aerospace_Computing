@@ -23,10 +23,10 @@ def p17matrix(n):
 
 def gs17(x, omega):
     n = len(x)
-    x[0] = omega * -(x[1] + x[n - 1]) / 4 + (1 - omega) * x[0]
+    x[0] = omega * (x[1] - x[n - 1]) / 4 + (1 - omega) * x[0]
     for i in range(1, n - 1):
-        x[i] = omega * -(x[i - 1] + x[i + 1]) / 4 + (1 - omega) * x[i]
-    x[n - 1] = omega * (100 - (x[0] + x[n - 2])) / 4 + (1 - omega) * x[n - 1]
+        x[i] = omega * (x[i - 1] + x[i + 1]) / 4 + (1 - omega) * x[i]
+    x[n - 1] = omega * (100 - x[0] + x[n - 2]) / 4 + (1 - omega) * x[n - 1]
     return x
 
 
@@ -37,6 +37,7 @@ def cg17(v):
     Ax[1:n - 1] = -v[0:n - 2] + 4 * v[1:n - 1] - v[2:n]
     Ax[n-1] = v[0] - v[n-2] + 4 * v[n-1]
     return Ax
+
 
 def p19matrix(n):
     a = np.zeros((n, n)).astype('float64')
@@ -114,9 +115,10 @@ def part2visualization(data):
     axs[1].set_xticks(xpoints, xticks, rotation=45)
     axs[1].set_title('Function Accuracy')
     axs[1].set_ylabel('2-Norm of Residual')
+    axs[1].set_ylim([-0.001, 0.1])
     plt.tight_layout()
     plt.show()
 
 
-out = part2()
-part2visualization(out)
+o = part2()
+part2visualization(o)
