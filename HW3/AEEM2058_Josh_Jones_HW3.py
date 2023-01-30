@@ -2,6 +2,8 @@ import numpy as np
 import compFunc as cf
 import time
 import matplotlib.pyplot as plt
+import pandas as pd
+
 
 
 def p17matrix(n):
@@ -78,7 +80,6 @@ def p19b(n):
                 b[(3 * i) + j] = -200
             elif j == n - 1:
                 b[(3 * i) + j] = -100
-
     return b
 
 
@@ -136,11 +137,11 @@ def part2visualization(data):
     data[0] = 100000 * data[0]
     fig, axs = plt.subplots(1, 2)
     fig.suptitle('Runtime and Accuracy', weight='bold')
-    axs[0].scatter(xpoints, data[0], c='r')
+    axs[0].stem(xpoints, data[0], 'r')
     axs[0].set_xticks(xpoints, xticks, rotation=45)
     axs[0].set_title('Function Runtime')
     axs[0].set_ylabel('Runtime (microseconds)')
-    axs[1].scatter(xpoints, data[1])
+    axs[1].stem(xpoints, data[1], 'r')
     axs[1].set_xticks(xpoints, xticks, rotation=45)
     axs[1].set_title('Function Accuracy')
     axs[1].set_ylabel('2-Norm of Residual')
@@ -148,9 +149,17 @@ def part2visualization(data):
     plt.tight_layout()
     plt.show()
 
+    # Creating a dataFrame from pandas to create table
+    data = {'Runtime (microseconds)': [data[0, 0], data[0, 1], data[0, 2], data[0, 3], data[0, 4]],
+            'Accuracy': [data[1, 0], data[1, 1], data[1, 2], data[1, 3], data[1, 4]]
+            }
+    # Tabled values with relevant indexes for left hand side
+    df = pd.DataFrame(data, index=['Cramer', 'GaussPivot', 'LUPivot', 'GaussSeidel', 'ConjGrad'])
+    print(df)
 
-# o = part2()
-# part2visualization(o)
-bm = p19b(3)
-print(bm)
-# cf.conjGrad(p19mesh, )
+
+o = part2()
+part2visualization(o)
+#bm = p19b(3)
+#x = np.zeros(9)
+#cf.conjGrad(p19mesh, bm, x)
