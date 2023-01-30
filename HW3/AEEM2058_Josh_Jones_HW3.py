@@ -1,6 +1,7 @@
 import numpy as np
 import compFunc as cf
 import time
+import matplotlib.pyplot as plt
 
 
 def p17matrix(n):
@@ -19,6 +20,23 @@ def p17matrix(n):
             b[i, 0] = 100
     return a, b
 
+
+def gs17(x, omega):
+    n = len(x)
+    x[0] = omega * -(x[1] + x[n - 1]) / 4 + (1 - omega) * x[0]
+    for i in range(1, n - 1):
+        x[i] = omega * -(x[i - 1] + x[i + 1]) / 4 + (1 - omega) * x[i]
+    x[n - 1] = omega * (100 - (x[0] + x[n - 2])) / 4 + (1 - omega) * x[n - 1]
+    return x
+
+
+def cg17(v):
+    n = len(v)
+    Ax = np.zeros(n)
+    Ax[0] = 4 * v[0] - v[1] + v[n - 1]
+    Ax[1:n - 1] = -v[0:n - 2] + 4 * v[1:n - 1] - v[2:n]
+    Ax[n-1] = v[0] - v[n-2] + 4 * v[n-1]
+    return Ax
 
 def p19matrix(n):
     a = np.zeros((n, n)).astype('float64')
@@ -39,45 +57,66 @@ def part2():
     n = 20
     a, b = p17matrix(n)
 
+    # Row 1 = Runtime Row 2 = Accuracy (using 2 base norm)
+    data = np.empty([2, 5])
+
     # Cramer Calculation
     t0 = time.perf_counter()
     x = cf.cramer(a.copy(), b.copy())
-    t = time.perf_counter() - t0
-    v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+    data[0, 0] = time.perf_counter() - t0
+    data[1, 0] = np.linalg.norm(np.dot(a.copy(), x) - b.copy())
 
     # Gauss Pivot Calculation
     t0 = time.perf_counter()
     x = cf.gaussPivot(a.copy(), b.copy())
-    t = time.perf_counter() - t0
-    v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+    data[0, 1] = time.perf_counter() - t0
+    data[1, 1] = np.linalg.norm(np.dot(a.copy(), x) - b.copy())
 
     # LUPivot Calculation
     t0 = time.perf_counter()
     a0, seq = cf.LUpivot(a.copy())
     x = cf.LUsolve(a0.copy(), b.copy(), seq.copy())
-    t = time.perf_counter() - t0
-    v = np.sum(np.array(np.dot(a.copy(), x) - b.copy()))
+    data[0, 2] = time.perf_counter() - t0
+    data[1, 2] = np.linalg.norm(np.dot(a.copy(), x) - b.copy())
 
     # Gauss Seidel Calculation
     t0 = time.perf_counter()
     x = np.zeros(n)
-    t = time.perf_counter() - t0
+    x, numIter, omega = cf.gaussSeidel(gs17, x)
+    data[0, 3] = time.perf_counter() - t0
+    x = x.reshape([n, 1])
+    data[1, 3] = np.linalg.norm(np.dot(a.copy(), x) - b.copy())
 
     # Conjugate Gradient Calculation
     t0 = time.perf_counter()
     x = np.zeros(n)
-    x, numIter = cf.conjGrad(cf.Ax, x, b.copy())
-    t = time.perf_counter() - t0
+    b1 = np.zeros(n)
+    b1[n-1] = 100
+    x, numIter = cf.conjGrad(cg17, x, b1.copy())
+    data[0, 4] = time.perf_counter() - t0
+    x = x.reshape([n, 1])
+    data[1, 4] = np.linalg.norm(np.dot(a.copy(), x) - b.copy())
+
+    return data
 
 
-def ax19(T):
-    n = len(T)
-    Ax = np.zeros(n)
-    m = np.sqrt(n)
-    Ax[0] = -4.0*T[0]+T[1]+T[m]
-    for k in range(1:m-1):
-        Ax[k] = T[k-1]-4.0*T[k]+T[k+1]+T[k+m]
-    k = m-1
-    Ax[k] = T[m-2]-4.0*T[m-1]+T[2*m-1]
+def part2visualization(data):
+    xpoints = np.arange(5)
+    xticks = ['Cramer', 'GaussPivot', 'LUPivot', 'GaussSeidel', 'ConjGrad']
+    data[0] = 100000 * data[0]
+    fig, axs = plt.subplots(1, 2)
+    fig.suptitle('Runtime and Accuracy', weight='bold')
+    axs[0].scatter(xpoints, data[0], c='r')
+    axs[0].set_xticks(xpoints, xticks, rotation=45)
+    axs[0].set_title('Function Runtime')
+    axs[0].set_ylabel('Runtime (microseconds)')
+    axs[1].scatter(xpoints, data[1])
+    axs[1].set_xticks(xpoints, xticks, rotation=45)
+    axs[1].set_title('Function Accuracy')
+    axs[1].set_ylabel('2-Norm of Residual')
+    plt.tight_layout()
+    plt.show()
 
-    return Ax
+
+out = part2()
+part2visualization(out)
