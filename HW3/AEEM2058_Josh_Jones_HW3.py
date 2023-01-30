@@ -66,6 +66,22 @@ def p19mesh(t):
     return Ax
 
 
+def p19b(n):
+    # Where input is n of n x n size matrix
+    a = np.zeros([n, n])
+    b = np.zeros([pow(n, 2), 1])
+    for i in range(a.shape[0]):
+        for j in range(a.shape[1]):
+            if j == n - 1 and i == n - 1:
+                b[(3 * i) + j] = -300
+            elif i == n - 1:
+                b[(3 * i) + j] = -200
+            elif j == n - 1:
+                b[(3 * i) + j] = -100
+
+    return b
+
+
 def part2():
     # Matrix Formation for problem
     n = 20
@@ -135,5 +151,6 @@ def part2visualization(data):
 
 # o = part2()
 # part2visualization(o)
-
-cf.conjGrad(p19mesh, )
+bm = p19b(3)
+print(bm)
+# cf.conjGrad(p19mesh, )
