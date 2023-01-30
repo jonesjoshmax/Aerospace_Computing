@@ -20,8 +20,7 @@ def p17matrix(n):
     return a, b
 
 
-def p19matrix():
-    n = 20
+def p19matrix(n):
     a = np.zeros((n, n)).astype('float64')
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
@@ -61,6 +60,24 @@ def part2():
 
     # Gauss Seidel Calculation
     t0 = time.perf_counter()
-    x,
+    x = np.zeros(n)
     t = time.perf_counter() - t0
+
     # Conjugate Gradient Calculation
+    t0 = time.perf_counter()
+    x = np.zeros(n)
+    x, numIter = cf.conjGrad(cf.Ax, x, b.copy())
+    t = time.perf_counter() - t0
+
+
+def ax19(T):
+    n = len(T)
+    Ax = np.zeros(n)
+    m = np.sqrt(n)
+    Ax[0] = -4.0*T[0]+T[1]+T[m]
+    for k in range(1:m-1):
+        Ax[k] = T[k-1]-4.0*T[k]+T[k+1]+T[k+m]
+    k = m-1
+    Ax[k] = T[m-2]-4.0*T[m-1]+T[2*m-1]
+
+    return Ax

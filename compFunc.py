@@ -185,6 +185,17 @@ def matInv(a):
     return aInv
 
 
+## iterEqs for gaussSeidel
+def iterEqs(x,omega):
+    n = len(x)
+    x[0] = omega*(x[1] - x[n-1])/2.0 + (1.0 - omega)*x[0]
+    for i in range(1,n-1):
+        x[i] = omega*(x[i-1] + x[i+1])/2.0 + (1.0 - omega)*x[i]
+    x[n-1] = omega*(1.0 - x[0] + x[n-2])/2.0 \
+        + (1.0 - omega)*x[n-1]
+    return x
+
+
 ## module gaussSeidel
 '''
     x,numIter,omega = gaussSeidel(iterEqs,x,tol = 1.0e-9)
@@ -206,8 +217,7 @@ def gaussSeidel(iterEqs,x,tol = 1.0e-9):
         if i == k: dx1 = dx
         if i == k + p:
             dx2 = dx
-            omega = 2.0/(1.0 + math.sqrt(1.0 \
-            - (dx2/dx1)**(1.0/p)))
+            omega = 2.0/(1.0 + math.sqrt(1.0 - (dx2/dx1)**(1.0/p)))
     print('Gauss-Seidel failed to converge')
 
 ## module Ax
