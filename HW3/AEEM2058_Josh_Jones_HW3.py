@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-
 def p17matrix(n):
     a = np.zeros((n, n)).astype('float64')
     for i in range(a.shape[0]):
@@ -44,7 +43,7 @@ def cg17(v):
 def p19mesh(t):
     n = len(t)
     Ax = np.zeros(n)
-    m = np.sqrt(n)
+    m = int(np.sqrt(n))
     Ax[0] = -4 * t[0] + t[1] + t[m]
     for k in range(1, m - 1):
         Ax[k] = t[k - 1] - 4 * t[k] + t[k + 1] + t[k + m]
@@ -158,8 +157,8 @@ def part2visualization(data):
     print(df)
 
 
-o = part2()
-part2visualization(o)
-#bm = p19b(3)
-#x = np.zeros(9)
-#cf.conjGrad(p19mesh, bm, x)
+# o = part2()
+# part2visualization(o)
+bm = p19b(3)
+x = np.zeros([9, 1])
+cf.conjGrad(p19mesh, bm, x)
