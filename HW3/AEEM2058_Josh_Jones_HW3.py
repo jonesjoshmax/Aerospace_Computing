@@ -44,33 +44,33 @@ def p19mesh(t):
     n = len(t)
     Ax = np.zeros(n)
     m = int(np.sqrt(n))
-    Ax[0] = -4 * t[0] + t[1] + t[m]
+    Ax[0] = -4.0 * t[0] + t[1] + t[m]
     for k in range(1, m - 1):
-        Ax[k] = t[k - 1] - 4 * t[k] + t[k + 1] + t[k + m]
+        Ax[k] = t[k - 1] - 4.0 * t[k] + t[k + 1] + t[k + m]
     k = m - 1
-    Ax[k] = t[k - m] - 4 * t[m - 1] + t[2 * m - 1]
+    Ax[k] = t[m - 2] - 4.0 * t[m - 1] + t[2 * m - 1]
     for i in range(1, m - 1):
         k = i * m
-        Ax[k] = t[k - m] - 4 * t[k] + t[k + 1] + t[k + m]
+        Ax[k] = t[k - m] - 4.0 * t[k] + t[k + 1] + t[k + m]
         for j in range(1, m - 1):
             k = i * m + j
-            Ax[k] = t[k - m] + t[k - 1] - 4 * t[k] + t[k + m]
-        k = (i + 1) * m - 1
-        Ax[k] = t[k - m] + t[k - 1] - 4 * t[k] + t[k + m]
-        k = (m - 1) * m
-        Ax[k] = t[k - m] - 4 * t[k] + t[k + 1]
-        for j in range(1, m - 1):
-            k = (m - 1) * m + j
-            Ax[k] = t[k - m] + t[k - 1] - 4 * t[k] + t[k + 1]
-        k = pow(m, 2) - 1
-        Ax[k] = t[k - m] + t[k - 1] - 4 * t[k]
+            Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + m] + t[k + 1]
+    k = (i + 1) * m - 1
+    Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + m]
+    k = (m - 1) * m
+    Ax[k] = t[k - m] - 4.0 * t[k] + t[k + 1]
+    for j in range(1, m - 1):
+        k = (m - 1) * m + j
+        Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + 1]
+    k = pow(m, 2) - 1
+    Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k]
     return Ax
 
 
 def p19b(n):
     # Where input is n of n x n size matrix
     a = np.zeros([n, n])
-    b = np.zeros([pow(n, 2), 1])
+    b = np.zeros(pow(n, 2))
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
             if j == n - 1 and i == n - 1:
@@ -157,8 +157,11 @@ def part2visualization(data):
     print(df)
 
 
-# o = part2()
-# part2visualization(o)
+#o = part2()
+#part2visualization(o)
 bm = p19b(3)
-x = np.zeros([9, 1])
-cf.conjGrad(p19mesh, bm, x)
+bm = bm.astype(float)
+x1 = np.zeros(9, dtype=float)
+x1, numIter = cf.conjGrad(p19mesh, x1, bm.copy())
+print(x1)
+print(x1.reshape([3,3]))
