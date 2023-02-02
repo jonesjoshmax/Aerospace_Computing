@@ -224,6 +224,7 @@ def part3():
     # Titles and labels to help your eyes
     plt.colorbar(label='Degrees')
     plt.title('Temperature Gradient of 9 x 9')
+    plt.gca().invert_yaxis()
     plt.xlabel('X position')
     plt.ylabel('Y position')
     plt.show()
@@ -237,6 +238,7 @@ def part3():
     x = np.arange(1, 41)
     y = x
     plt.contourf(x, y, x1600, cmap='hot')
+    plt.gca().invert_yaxis()
     plt.colorbar(label='Degrees')
     plt.title('Temperature Gradient of 40 x 40')
     plt.xlabel('X position')
