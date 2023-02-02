@@ -55,15 +55,15 @@ def p19mesh(t):
         for j in range(1, m - 1):
             k = i * m + j
             Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + m] + t[k + 1]
-    k = (i + 1) * m - 1
-    Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + m]
-    k = (m - 1) * m
-    Ax[k] = t[k - m] - 4.0 * t[k] + t[k + 1]
-    for j in range(1, m - 1):
-        k = (m - 1) * m + j
-        Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + 1]
-    k = pow(m, 2) - 1
-    Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k]
+        k = (i + 1) * m - 1
+        Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + m]
+        k = (m - 1) * m
+        Ax[k] = t[k - m] - 4.0 * t[k] + t[k + 1]
+        for j in range(1, m - 1):
+            k = (m - 1) * m + j
+            Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k] + t[k + 1]
+        k = pow(m, 2) - 1
+        Ax[k] = t[k - m] + t[k - 1] - 4.0 * t[k]
     return Ax
 
 
@@ -157,11 +157,34 @@ def part2visualization(data):
     print(df)
 
 
+def part3():
+    b9 = p19b(3)
+    b1600 = p19b(40)
+    x9 = np.zeros(9)
+    x1600 = np.zeros(1600)
+    data = np.zeros(2)
+
+    # 9 x 9 Solver
+    t0 = time.perf_counter()
+    x9, void = cf.conjGrad(p19mesh, x9, b9.copy())
+    data[0] = time.perf_counter() - t0
+    x9 = x9.reshape([3, 3])
+    x = np.arange(1, 4)
+    y = x
+    plt.contourf(x, y, x9)
+    plt.show()
+
+    # 40 x 40 Solver
+    t0 = time.perf_counter()
+    x1600, void = cf.conjGrad(p19mesh, x1600, b1600.copy())
+    data[0] = time.perf_counter() - t0
+    x1600 = x1600.reshape([40, 40])
+    x = np.arange(1, 41)
+    y = x
+    plt.contourf(x, y, x1600)
+    plt.show()
+
+
 #o = part2()
 #part2visualization(o)
-bm = p19b(3)
-bm = bm.astype(float)
-x1 = np.zeros(9, dtype=float)
-x1, numIter = cf.conjGrad(p19mesh, x1, bm.copy())
-print(x1)
-print(x1.reshape([3,3]))
+part3()
