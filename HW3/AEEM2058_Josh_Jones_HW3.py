@@ -256,6 +256,10 @@ def part3():
     plt.text(2 - .35, data[1] - .05, data[1])
     plt.show()
 
+    # Order of operations calculation
+    order_op = np.log(data[1] / data[0]) / np.log(40 / 3)
+    print('Order of Operations = {}'.format(np.round(order_op, 2)))
+
 
 o = part2()
 part2visualization(o)
