@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import sys
+import matplotlib.pyplot as plt
 
 ## module error
 ''' 
@@ -339,12 +340,12 @@ def evalSpline(xData,yData,k,x):
             if x < xData[i]: iRight = i
             else: iLeft = i
 
-        i = findSegment(xData, x)
-        h = xData[i] - xData[i + 1]
-        y = ((x - xData[i + 1]) ** 3 / h - (x - xData[i + 1]) * h) * k[i] / 6.0 \
-            - ((x - xData[i]) ** 3 / h - (x - xData[i]) * h) * k[i + 1] / 6.0 \
-            + (yData[i] * (x - xData[i + 1]) \
-               - yData[i + 1] * (x - xData[i])) / h
+    i = findSegment(xData, x)
+    h = xData[i] - xData[i + 1]
+    y = ((x - xData[i + 1]) ** 3 / h - (x - xData[i + 1]) * h) * k[i] / 6.0 \
+        - ((x - xData[i]) ** 3 / h - (x - xData[i]) * h) * k[i + 1] / 6.0 \
+        + (yData[i] * (x - xData[i + 1]) \
+        - yData[i + 1] * (x - xData[i])) / h
     return y
 
 
@@ -368,10 +369,10 @@ def polyFit(xData,yData,m):
         for j in range(m+1):
             b[j] = b[j] + temp
             temp = temp*xData[i]
-    temp = 1.0
-    for j in range(2*m+1):
-        s[j] = s[j] + temp
-        temp = temp*xData[i]
+        temp = 1.0
+        for j in range(2*m+1):
+            s[j] = s[j] + temp
+            temp = temp*xData[i]
     for i in range(m+1):
         for j in range(m+1):
             a[i, j] = s[i + j]
