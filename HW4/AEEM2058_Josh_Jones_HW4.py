@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import compFunc as cf
+import pandas as pd
 
 
 # Arrays for part 2
@@ -38,15 +39,13 @@ def part2():
 
     # Data Visualization for p15
     fig, (ax1, ax2) = plt.subplots(2, 1)
-    fig.suptitle('Problem Set 3.2 Problem 15')
-    ax1.set_title('Rational Evaluation')
+    fig.suptitle('Problem Set 3.1 Problem 17')
+    ax1.set_title('Rational Solve')
     ax1.set_xlabel('Temperature (C)')
     ax1.set_ylabel('Specific Heat (kJ/kgK)')
     ax1.plot(x_r, y_r, color='orange')
     ax1.grid()
-    # Setting Limits because data is far off at 300
-    ax1.set_ylim(-1, 1)
-    ax2.set_title('Newton Polynomial Evaluation')
+    ax2.set_title('Newton Polynomial Solve')
     ax2.set_xlabel('Temperature (C)')
     ax2.set_ylabel('Specific Heat (kJ/kgK)')
     ax2.plot(x_np, y_np, color='red')
@@ -55,23 +54,34 @@ def part2():
     plt.show()
 
     # Problem 17
-    print(set31prob17[:, 0].copy())
-    print(set31prob17[:, 1].copy())
-    # Cubic Spline Solve
-    x_cs = np.array([5, 50, 500, 5000], float)
-    y_cs = np.zeros(np.size(x_cs), float)
-    k = cf.curvatures(set31prob17[:, 0].copy(), set31prob17[:, 1].copy())
-    for i in range(np.size(x_cs)):
-        y_cs[i] = cf.evalSpline(set31prob17[:, 0].copy(), set31prob17[:, 1].copy(), k, x_cs[i])
-    print(y_cs)
 
-    # Newton Poly Solve
+    x_r = np.array([5, 50, 500, 5000], float)
     x_np = np.array([5, 50, 500, 5000], float)
+    x_cs = np.array([5, 50, 500, 5000], float)
+    y_r = np.zeros(np.size(x_r), float)
     y_np = np.zeros(np.size(x_np), float)
-    a = cf.coeffts(set31prob17[:, 0].copy(), set31prob17[:, 1].copy())
-    for i in range(np.size(x_np)):
-        y_np[i] = cf.evalPoly(a, set31prob17[:, 0].copy(), x_np[i])
-    print(y_np)
+    y_cs = np.zeros(np.size(x_cs), float)
+
+    # Rational Solve
+    for i in range(len(x_r)):
+        y_r[i] = np.exp(cf.rational(np.log(set31prob17[:, 0].copy()), np.log(set31prob17[:, 1].copy()),
+                                    np.log(x_r[i])))
+
+    # Cubic Spline Solve
+    k = cf.curvatures(np.log(set31prob17[:, 0].copy()), np.log(set31prob17[:, 1].copy()))
+    for i in range(np.size(x_cs)):
+        y_cs[i] = np.exp(cf.evalSpline(np.log(set31prob17[:, 0].copy()),
+                                       np.log(set31prob17[:, 1].copy()), k, np.log(x_cs[i])))
+
+    # Creating a dataFrame from pandas to create table
+    data = {'Reynolds Number': x_r,
+            'CD Cubic Spline': y_cs,
+            'CD Rational': y_r}
+    # Tabled values with relevant indexes for left hand side
+    df = pd.DataFrame(data)
+    blankIndex = [''] * len(df)
+    df.index = blankIndex
+    print(df)
 
 
 def part3():
@@ -91,7 +101,7 @@ def part3():
         return coeffs, deviation, index + 1
 
     # Problem set 3.2
-    test_range = 10
+    test_range = 9
 
     # Problem 5
     coeffs_5, deviation_5, fit_5 = fitTest(set32prob5[:, 0].copy(), set32prob5[:, 1].copy(), test_range)
@@ -104,5 +114,5 @@ def part3():
     print(deviation_16, fit_16)
 
 
-part3()
+part2()
 
