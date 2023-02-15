@@ -405,7 +405,7 @@ def stdDev(c, xData, yData):
     array coeff = [a0, a1. ...]
     xlab and ylab are optional axis labels
 '''
-def plotPoly(xData,yData,coeff,xlab='x',ylab='y'):
+def plotPoly(xData,yData,coeff,title, xlab,ylab):
     m = len(coeff)
     x1 = min(xData)
     x2 = max(xData)
@@ -415,6 +415,7 @@ def plotPoly(xData,yData,coeff,xlab='x',ylab='y'):
     for i in range(m):
         y = y + coeff[i] * x ** i
     plt.plot(xData, yData,'o', x, y,'-')
+    plt.title(title)
     plt.xlabel(xlab);
     plt.ylabel(ylab)
     plt.grid(True)
