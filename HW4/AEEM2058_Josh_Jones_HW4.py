@@ -127,7 +127,7 @@ def part3():
 
     # Problem 16
     coeffs_16, deviation_16, fit_16 = fitTest(set32prob16[:, 0].copy(), set32prob16[:, 1].copy(), test_range)
-    # Inititializing values used in loop ahead
+    # Initializing values used in loop ahead
     t = 0
     y = 0
     print('\033[1m' + '\nProblem 3 Part B (Set 3.2, Problem 16)' + '\033[0m')
