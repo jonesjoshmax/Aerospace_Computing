@@ -483,7 +483,7 @@ def newtonRaphson(f,df,a,b,tol=1.0e-9):
     if fb == 0.0: return b
     if np.sign(fa) == np.sign(fb): err('Root is not bracketed')
     x = 0.5*(a + b)
-    for i in range(30):
+    for i in range(100000):
         fx = f(x)
         if fx == 0.0: return x
      # Tighten the brackets on the root

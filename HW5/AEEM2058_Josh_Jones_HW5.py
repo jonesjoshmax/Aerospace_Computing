@@ -4,51 +4,90 @@ import sympy as sp
 from scipy.optimize import fsolve
 
 
-# T B M Input
-def tbm_input():
-    # Will index x as [theta, beta, mach]
-    x = np.zeros(3, float)
-    x_i = input('Are you solving for Theta (T), Beta (B), or Mach (M): ').lower()
-    y = input('Degrees (D) or Radians(R): ').lower()
-    if x_i == 't':
-        x[0] = None
-        x[1] = eval(input('Beta Value: '))
-        x[2] = eval(input('Mach Value: '))
-    elif x_i == 'b':
-        x[1] = None
-        x[0] = eval(input('Theta Value: '))
-        x[2] = eval(input('Mach Value: '))
-    elif x_i == 'm':
-        x[2] = None
-        x[0] = eval(input('Theta Value: '))
-        x[1] = eval(input('Beta Value: '))
-    else:
-        cf.err('Idiot')
-    if y == 'd':
-        x[0] = np.radians(x[0])
-        x[1] = np.radians(x[1])
-    return x
+def prob2():
 
+    # Taking inputs for relevant values
+    print('Return to skip value (Solving for this value)')
+    # Choice to choose working in degrees or radians
+    choice = input('Degrees (D) or Radians(R)').lower()
+    find = input('Are you solving for Theta (T), Beta(B), or Mach(M):').lower()
+    # If statements to take variables in that are known and set unknown to None
+    if find == 't':
+        theta = None
+        beta = float(input('Beta Value: '))
+        mach = float(input('Mach Value: '))
+    elif find == 'b':
+        theta = float(input('Theta Value: '))
+        beta = None
+        mach = float(input('Mach Value: '))
+    elif find == 'm':
+        theta = float(input('Theta Value: '))
+        beta = float(input('Beta Value: '))
+        mach = None
+    # Conversion from degrees to radians for solver
+    if choice == 'd':
+        if mach is None:
+            theta = np.radians(theta)
+            beta = np.radians(beta)
+        elif theta is None:
+            beta = np.radians(beta)
+        elif beta is None:
+            theta = np.radians(theta)
+    gamma = float(input('Gamma Value: '))
 
-# T B M Solve
-def tbm(x):
-    t = sp.Symbol('t')
-    b = sp.Symbol('b')
-    m = sp.Symbol('m')
-    expr = (2 * sp.atan(b) * ((sp.Pow(m, 2) * sp.Pow(sp.sin(b), 2) - 1) /
-                              (sp.Pow(m, 2) * (1.4 + sp.cos(2 * b)) + 2))) - sp.tan(t)
-    if np.isnan(x[0]):
-        expr = expr.subs(b, x[1]).subs(m, x[2])
-        return sp.solvers.solve(expr, t)
-    elif np.isnan(x[1]):
-        expr = expr.subs(t, x[0]).subs(m, x[2])
-        expr_np = sp.lambdify(b, expr)
-        return fsolve(expr_np, 0)
-    elif np.isnan(x[2]):
-        expr = expr.subs(t, x[0]).subs(b, x[1])
-        return sp.solvers.solve(expr, m)
+    # Creating some variables for future sympy expression
+    t = sp.symbols('t')
+    b = sp.symbols('b')
+    m = sp.symbols('m')
+
+    # Expression written out
+    expr = (2 * sp.cot(b)) * ((((m ** 2.0) * (sp.sin(b) ** 2.0)) - 1.0) /
+                              ((m ** 2.0) * (gamma + sp.cos(2.0 * b)) + 2.0)) - sp.tan(t)
+
+    # If chain to solve for x variable
+    # Also subs known values into equation
+    if theta is None:
+        expr = expr.subs(b, beta).subs(m, mach)
+        var = t
+    elif beta is None:
+        expr = expr.subs(t, theta).subs(m, mach)
+        var = b
+    elif mach is None:
+        expr = expr.subs(t, theta).subs(b, beta)
+        var = m
     else:
-        cf.err('Error in TBM')
+        return 'error'
+
+    # Taking derivative of the function with substituted variable
+    expr_d = sp.diff(expr, var)
+
+    # Converting the expression to a function that can be sent through the root search and newton functions
+    f = sp.lambdify(var, expr)
+    df = sp.lambdify(var, expr_d)
+
+    # Root search used to get bounds for beta first value so it can be solve twice
+    a1, b1 = cf.rootsearch(f, 0.0, np.pi / 2, .01)
+
+    # Solving beta twice as it is a paraboloa
+    if beta is None:
+        r1 = cf.newtonRaphson(f, df, a1, b1)
+        r2 = cf.newtonRaphson(f, df, np.pi / 2, b1)
+    elif theta is None:
+        r1 = cf.newtonRaphson(f, df, a1, b1)
+        r2 = None
+    # Mach solve set from 0 to 10000
+    elif mach is None:
+        r1 = cf.newtonRaphson(f, df, 0, 10000)
+        r2 = None
+
+    # Converting the radians back to degrees if user selected degrees
+    if choice == 'd' and find != 'm':
+        r1 = np.degrees(r1)
+        if r2 is not None:
+            r2 = np.degrees(r2)
+
+    # Returning values
+    return r1, r2
 
 
 # Problem 3
@@ -90,9 +129,25 @@ def prob4():
 
     pr = cf.polyRoots(a)
     pd = cf.deflPoly(a, r)
-    return pd, pr
-    # Question 11 in set 4.2
 
+    # Question 11 in set 4.2
+    b = np.array([-624, 4, 780, -5, -156, 1])
+    pr2 = cf.polyRoots(b)
+    r2 = 6
+    return pr, pd, pr2, r2
+
+
+b1, b2 = prob2()
+print('The corresponding Beta values are %.2f and %.2f' % (b1, b2))
+t1, t2 = prob2()
+print('The corresponding Theta value is %.2f' % t1)
+m1, m2 = prob2()
+print('The corresponding Mach value is %.2f' % m1)
 
 print('The time it takes to reach 335 m/s is %.3f seconds.' % prob3())
-i, j = prob4()
+
+x, y, z, r = prob4()
+print('Solving set 4.2 question 3, our roots are :\n', x)
+print('The deflated polynomial is:')
+print('(r - {0}) ({1}x**4 + {2}x**3 + {3}x**2 + {4}x + {5})'.format(r, y[-1], y[-2], y[-3], y[-4], y[-5]))
+print('Solving set 4.2 question 11, our roots are:\n', z)
