@@ -176,13 +176,13 @@ def part2visualization(data):
     # Main Title
     fig.suptitle('Runtime and Accuracy', weight='bold')
     # Stemplot for the run time
-    axs[0].stem(xpoints, data[0], 'r')
+    axs[0].stem(xpoints, data[0], 'i')
     # X labels
     axs[0].set_xticks(xpoints, xticks, rotation=45)
     axs[0].set_title('Function Runtime')
     axs[0].set_ylabel('Runtime (microseconds)')
     # Similar to previous section, just for accuracy
-    axs[1].stem(xpoints, data[1], 'r')
+    axs[1].stem(xpoints, data[1], 'i')
     axs[1].set_xticks(xpoints, xticks, rotation=45)
     axs[1].set_title('Function Accuracy')
     axs[1].set_ylabel('2-Norm of Residual')
@@ -247,7 +247,7 @@ def part3():
 
     # Runtime stemplots
     # Similar to ones described earlier in function
-    plt.stem(np.arange(1, 3), data, 'r')
+    plt.stem(np.arange(1, 3), data, 'i')
     plt.title('Runtime Performance')
     plt.xticks(np.arange(1, 3), ['9 x 9', '40 x 40'], rotation=45)
     plt.ylabel('Runtime (seconds)')

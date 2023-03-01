@@ -43,7 +43,7 @@ def forward2_second(f, mach, diff):
 
 
 def prob2():
-    ma = np.linspace(1, 5, 50, float)
+    ma = np.linspace(1, 5, 50)
     vals = np.zeros([6, ma.size], float)
     diff = .01
     for r in range(len(ma)):
@@ -68,34 +68,34 @@ def prob2():
     fig, ax = plt.subplots(3, 2)
 
     ax[0, 0].plot(ma, vals[0, :])
-    ax[0, 0].plot(ma, ref[0, :])
+    ax[0, 0].plot(ma, ref[0, :], '--')
     ax[0, 0].set_title("Central v'(m)")
     ax[0, 0].grid()
 
     ax[0, 1].plot(ma, vals[3, :])
-    ax[0, 1].plot(ma, ref[1, :])
+    ax[0, 1].plot(ma, ref[1, :], '--')
     ax[0, 1].set_title("Central v''(m)")
     ax[0, 1].grid()
 
     ax[1, 0].plot(ma, vals[1, :])
-    ax[1, 0].plot(ma, ref[0, :])
+    ax[1, 0].plot(ma, ref[0, :], '--')
     ax[1, 0].set_title("Forward 1st Order v'(m)")
     ax[1, 0].grid()
 
     ax[1, 1].plot(ma, vals[4, :])
-    ax[1, 1].plot(ma, ref[1, :])
+    ax[1, 1].plot(ma, ref[1, :], '--')
     ax[1, 1].set_title("Forward 1st Order v''(m)")
     ax[1, 1].grid()
 
     ax[2, 0].plot(ma, vals[2, :])
-    ax[2, 0].plot(ma, ref[0, :])
+    ax[2, 0].plot(ma, ref[0, :], '--')
     ax[2, 0].set_title("Forward 2nd Order v'(m)")
     ax[2, 0].grid()
 
     ax[2, 1].plot(ma, vals[5, :])
-    ax[2, 1].plot(ma, ref[1, :])
+    ax[2, 1].plot(ma, ref[1, :], '--')
     ax[2, 1].set_title("Forward 2nd Order v''(m)")
-    ax[2, 1].set_ylim(-10, .5)
+    ax[2, 1].set_ylim(-20, 1)
     ax[2, 1].grid()
 
     plt.tight_layout()
