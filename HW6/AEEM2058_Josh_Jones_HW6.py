@@ -39,31 +39,31 @@ def forward2_first(f, mach, diff):
 
 def forward2_second(f, mach, diff):
     return (2 * f.subs(m, mach) - 5 * f.subs(m, mach + diff)
-            + 4 * f.subs(m, mach + (2 * diff)) - f.subs(m, mach + (3 * diff))) / (diff ** 3)
+            + 4 * f.subs(m, mach + (2 * diff)) - f.subs(m, mach + (3 * diff))) / (diff ** 2)
 
 
 def prob2():
-    ma = np.linspace(1, 5, 50)
+    ma = np.linspace(1, 5, 100)
     vals = np.zeros([6, ma.size], float)
-    diff = .01
-    for r in range(len(ma)):
-        if type(central_first(v, ma[r], diff)) != sp.core.add.Add:
-            vals[0, r] = central_first(v, ma[r], diff)
-        if type(forward_first(v, ma[r], diff)) != sp.core.add.Add:
-            vals[1, r] = forward_first(v, ma[r], diff)
-        if type(forward2_first(v, ma[r], diff)) != sp.core.add.Add:
-            vals[2, r] = forward2_first(v, ma[r], diff)
-        if type(central_second(v, ma[r], diff)) != sp.core.add.Add:
-            vals[3, r] = central_second(v, ma[r], diff)
-        if type(forward_second(v, ma[r], diff)) != sp.core.add.Add:
-            vals[4, r] = forward_second(v, ma[r], diff)
-        if type(forward2_second(v, ma[r], diff)) != sp.core.add.Add:
-            vals[5, r] = forward2_second(v, ma[r], diff)
+    diff = 1
+    for i in range(len(ma)):
+        if type(central_first(v, ma[i], diff)) != sp.core.add.Add:
+            vals[0, i] = central_first(v, ma[i], diff)
+        if type(forward_first(v, ma[i], diff)) != sp.core.add.Add:
+            vals[1, i] = forward_first(v, ma[i], diff)
+        if type(forward2_first(v, ma[i], diff)) != sp.core.add.Add:
+            vals[2, i] = forward2_first(v, ma[i], diff)
+        if type(central_second(v, ma[i], diff)) != sp.core.add.Add:
+            vals[3, i] = central_second(v, ma[i], diff)
+        if type(forward_second(v, ma[i], diff)) != sp.core.add.Add:
+            vals[4, i] = forward_second(v, ma[i], diff)
+        if type(forward2_second(v, ma[i], diff)) != sp.core.add.Add:
+            vals[5, i] = forward2_second(v, ma[i], diff)
 
     ref = np.zeros([2, np.size(ma)])
-    for r in range(len(ma)):
-        ref[0, r] = v_1.subs(m, ma[r])
-        ref[1, r] = v_2.subs(m, ma[r])
+    for i in range(len(ma)):
+        ref[0, i] = v_1.subs(m, ma[i])
+        ref[1, i] = v_2.subs(m, ma[i])
 
     fig, ax = plt.subplots(3, 2)
 
@@ -95,11 +95,52 @@ def prob2():
     ax[2, 1].plot(ma, vals[5, :])
     ax[2, 1].plot(ma, ref[1, :], '--')
     ax[2, 1].set_title("Forward 2nd Order v''(m)")
-    ax[2, 1].set_ylim(-20, 1)
+    # ax[2, 1].set_ylim(-20, 1)
     ax[2, 1].grid()
 
     plt.tight_layout()
     plt.show()
 
 
-prob2()
+def prob3():
+    ma = np.linspace(1, 5, 50)
+    diff = np.zeros(16)
+    vals = np.zeros([6 * diff.size, ma.size], float)
+    for i in range(diff.size):
+        diff[i] = 1 / (10 ** i)
+    bounds = 10
+    for i in range(diff.size):
+        for j in range(ma.size):
+            if type(central_first(v, ma[j], diff[i])) != sp.core.add.Add and \
+                    0 <= central_first(v, ma[j], diff[i]) <= 1:
+                vals[0 + (i * 6), j] = central_first(v, ma[j], diff[i])
+            if type(forward_first(v, ma[j], diff[i])) != sp.core.add.Add and \
+                    0 <= forward_first(v, ma[j], diff[i]) <= 1:
+                vals[1 + (i * 6), j] = forward_first(v, ma[j], diff[i])
+            if type(forward2_first(v, ma[j], diff[i])) != sp.core.add.Add and \
+                    0 <= forward2_first(v, ma[j], diff[i]) <= 1:
+                vals[2 + (i * 6), j] = forward2_first(v, ma[j], diff[i])
+            if type(central_second(v, ma[j], diff[i])) != sp.core.add.Add and \
+                    -bounds <= central_second(v, ma[j], diff[i]) <= bounds:
+                vals[3 + (i * 6), j] = central_second(v, ma[j], diff[i])
+            if type(forward_second(v, ma[j], diff[i])) != sp.core.add.Add and \
+                    -bounds <= forward_second(v, ma[j], diff[i]) <= bounds:
+                vals[4 + (i * 6), j] = forward_second(v, ma[j], diff[i])
+            if type(forward2_second(v, ma[j], diff[i])) != sp.core.add.Add and \
+                    -bounds <= forward2_second(v, ma[j], diff[i]) <= bounds:
+                vals[5 + (i * 6), j] = forward2_second(v, ma[j], diff[i])
+    error = np.zeros(vals.shape)
+    ticker = 1
+    for i in range(vals.shape[0]):
+        for j in range(vals.shape[1]):
+            if 1 <= ticker <= 3:
+                error[i, j] = v_1.subs(m, ma[j]) - vals[i, j]
+            elif 4 <= ticker <= 6:
+                error[i, j] = v_2.subs(m, ma[j]) - vals[i, j]
+        ticker = ticker + 1
+        if ticker == 7:
+            ticker = 1
+    return error
+
+
+est = prob3()
