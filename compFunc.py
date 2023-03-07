@@ -613,3 +613,34 @@ def deflPoly(a,root): # Deflates a polynomial
     for i in range(n-2,-1,-1):
         b[i] = a[i+1] + root*b[i+1]
     return b
+
+
+## Module Derivative estimation
+'''
+    Estimates derivatives
+'''
+def central_first(f, var, x, diff):
+    return (f.subs(var, x + diff) - f.subs(var, x - diff)) / (2 * diff)
+
+
+def central_second(f, var, x, diff):
+    return (f.subs(var, x + diff) - 2 * f.subs(var, x) + f.subs(var, x - diff)) / (diff ** 2)
+
+
+def forward_first(f, var, x, diff):
+    return (f.subs(var, x + diff) - f.subs(var, x)) / diff
+
+
+def forward_second(f, var, x, diff):
+    return (f.subs(var, x + (2 * diff)) - 2 * f.subs(var, x + diff)
+            + f.subs(var, x)) / (diff ** 2)
+
+
+def forward2_first(f, var, x, diff):
+    return (-f.subs(var, x + (2 * diff)) + 4 * f.subs(var, x + diff)
+            - 3 * f.subs(var, x)) / (2 * diff)
+
+
+def forward2_second(f, var, x, diff):
+    return (2 * f.subs(var, x) - 5 * f.subs(var, x + diff)
+            + 4 * f.subs(var, x + (2 * diff)) - f.subs(var, x + (3 * diff))) / (diff ** 2)
