@@ -66,7 +66,6 @@ def prob2():
     ax[2, 1].plot(ma, vals[5, :])
     ax[2, 1].plot(ma, ref[1, :], '--')
     ax[2, 1].set_title("Forward 2nd Order v''(m)")
-    # ax[2, 1].set_ylim(-20, 1)
     ax[2, 1].grid()
 
     plt.tight_layout()
@@ -74,44 +73,65 @@ def prob2():
 
 
 def prob3():
-    ma = np.linspace(1, 5, 50)
-    diff = np.zeros(16)
-    vals = np.zeros([6 * diff.size, ma.size], float)
-    for i in range(diff.size):
-        diff[i] = 1 / (10 ** i)
-    bounds = 10
-    for i in range(diff.size):
-        for j in range(ma.size):
-            if type(cf.central_first(v, m, ma[j], diff[i])) != sp.core.add.Add and \
-                    0 <= cf.central_first(v, m, ma[j], diff[i]) <= 1:
-                vals[0 + (i * 6), j] = cf.central_first(v, m, ma[j], diff[i])
-            if type(cf.forward_first(v, m, ma[j], diff[i])) != sp.core.add.Add and \
-                    0 <= cf.forward_first(v, m, ma[j], diff[i]) <= 1:
-                vals[1 + (i * 6), j] = cf.forward_first(v, m, ma[j], diff[i])
-            if type(cf.forward2_first(v, m, ma[j], diff[i])) != sp.core.add.Add and \
-                    0 <= cf.forward2_first(v, m, ma[j], diff[i]) <= 1:
-                vals[2 + (i * 6), j] = cf.forward2_first(v, m, ma[j], diff[i])
-            if type(cf.central_second(v, m, ma[j], diff[i])) != sp.core.add.Add and \
-                    -bounds <= cf.central_second(v, m, ma[j], diff[i]) <= bounds:
-                vals[3 + (i * 6), j] = cf.central_second(v, m, ma[j], diff[i])
-            if type(cf.forward_second(v, m, ma[j], diff[i])) != sp.core.add.Add and \
-                    -bounds <= cf.forward_second(v, m, ma[j], diff[i]) <= bounds:
-                vals[4 + (i * 6), j] = cf.forward_second(v, m, ma[j], diff[i])
-            if type(cf.forward2_second(v, m, ma[j], diff[i])) != sp.core.add.Add and \
-                    -bounds <= cf.forward2_second(v, m, ma[j], diff[i]) <= bounds:
-                vals[5 + (i * 6), j] = cf.forward2_second(v, m, ma[j], diff[i])
-    error = np.zeros(vals.shape)
-    ticker = 1
-    for i in range(vals.shape[0]):
-        for j in range(vals.shape[1]):
-            if 1 <= ticker <= 3:
-                error[i, j] = v_1.subs(m, ma[j]) - vals[i, j]
-            elif 4 <= ticker <= 6:
-                error[i, j] = v_2.subs(m, ma[j]) - vals[i, j]
-        ticker = ticker + 1
-        if ticker == 7:
-            ticker = 1
-    return error
+    n = 16
+    res = 50
+    x_diff = np.zeros(n)
+    for i in range(n):
+        x_diff[i] = 0.1 / 10 ** i
+    mach_list = np.linspace(1, 5, res)
+    label_list = []
+    for j in range(n):
+        label_list.append('1e-' + str(j + 1))
+
+    def errorFunc(func, ref):
+        error = np.zeros([n, res])
+        for j in range(error.shape[0]):
+            for k in range(error.shape[1]):
+                error[j, k] = abs(func(v, m, mach_list[k], x_diff[j]) - ref.subs(m, mach_list[k]))
+        return error
+
+    error_fc1 = errorFunc(cf.central_first, v_1)
+    error_1ff1 = errorFunc(cf.forward_first, v_1)
+    error_2ff1 = errorFunc(cf.forward2_first, v_1)
+    error_fc2 = errorFunc(cf.central_second, v_2)
+    error_1ff2 = errorFunc(cf.forward_second, v_2)
+    error_2ff2 = errorFunc(cf.forward2_second, v_2)
+
+    fig, ax = plt.subplots(3, 2)
+
+    for j in range(error_fc1.shape[0]):
+        ax[0, 0].plot(mach_list, error_fc1[j])
+    ax[0, 0].set_title("Central v'(m)")
+    ax[0, 0].grid()
+
+    for j in range(error_1ff1.shape[0]):
+        ax[0, 1].plot(mach_list, error_1ff1[j])
+    ax[0, 1].set_title("Central v''(m)")
+    ax[0, 1].grid()
+
+    for j in range(error_2ff1.shape[0]):
+        ax[1, 0].plot(mach_list, error_2ff1[j])
+    ax[1, 0].set_title("Forward 1st Order v'(m)")
+    ax[1, 0].grid()
+
+    for j in range(error_fc2.shape[0]):
+        ax[1, 1].plot(mach_list, error_fc2[j])
+    ax[1, 1].set_title("Forward 1st Order v''(m)")
+    ax[1, 1].grid()
+
+    for j in range(error_1ff2.shape[0]):
+        ax[2, 0].plot(mach_list, error_1ff2[j])
+    ax[2, 0].set_title("Forward 2nd Order v'(m)")
+    ax[2, 0].grid()
+
+    for j in range(error_2ff2.shape[0]):
+        ax[2, 1].plot(mach_list, error_2ff2[j])
+    ax[2, 1].set_title("Forward 2nd Order v''(m)")
+    ax[2, 1].grid()
+
+    fig.legend(label_list, loc=5)
+
+    plt.tight_layout()
+    plt.show()
 
 
-est = prob3()
