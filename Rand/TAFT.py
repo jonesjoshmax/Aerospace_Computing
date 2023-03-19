@@ -35,7 +35,8 @@ while True:
     cm_c4 = (np.pi / 4) * (a2 - a1)
     x_cp = (c / 4) * (1 + ((np.pi / cl) * (a1 - a2)))
 
-    print('CL: %.5f' % cl)
-    print('CM LE: %.5f' % cm_le)
-    print('CM C4: %.5f' % cl)
-    print('X CP: %.5f' % cm_le)
+    print('CL, CM, CM4, X CP')
+    print('%.5f' % cl)
+    print('%.5f' % cm_le)
+    print('%.5f' % cl)
+    print('%.5f' % cm_le)

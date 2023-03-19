@@ -644,3 +644,99 @@ def forward2_first(f, var, x, diff):
 def forward2_second(f, var, x, diff):
     return (2 * f.subs(var, x) - 5 * f.subs(var, x + diff)
             + 4 * f.subs(var, x + (2 * diff)) - f.subs(var, x + (3 * diff))) / (diff ** 2)
+
+
+## module trapezoid
+'''
+    Inew = trapezoid(f,a,b,Iold,k).
+    Recursive trapezoidal rule:
+    old = Integral of f(x) from x = a to b computed by
+    trapezoidal rule with 2ˆ(k-1) panels.
+    Inew = Same integral computed with 2ˆk panels.
+'''
+def trapezoid(f,a,b,Iold,k):
+    if k == 1:Inew = (f(a) + f(b))*(b - a)/2.0
+    else:
+        n = 2**(k -2 ) # Number of new points
+        h = (b - a)/n # Spacing of new points
+        x = a + h/2.0
+        sum = 0.0
+        for i in range(n):
+            sum = sum + f(x)
+            x=x+h
+        Inew = (Iold + h*sum)/2.0
+    return Inew
+
+
+## module romberg
+'''
+    I,nPanels = romberg(f,a,b,tol=1.0e-6).
+    Romberg integration of f(x) from x = a to b.
+    Returns the integral and the number of panels used.
+'''
+def romberg(f,a,b,tol=1.0e-6):
+    def richardson(r,k):
+        for j in range(k-1,0,-1):
+            const = 4.0**(k-j)
+            r[j] = (const*r[j+1] - r[j])/(const - 1.0)
+        return r
+
+    r = np.zeros(21)
+    r[1] = trapezoid(f,a,b,0.0,1)
+    r_old = r[1]
+    for k in range(2,21):
+        r[k] = trapezoid(f,a,b,r[k-1],k)
+        r = richardson(r,k)
+        if abs(r[1]-r_old) < tol*max(abs(r[1]),1.0):
+            return r[1],2**(k-1)
+        r_old = r[1]
+    print("Romberg quadrature did not converge")
+
+
+
+## module gaussNodes
+'''
+    x,A = gaussNodes(m,tol=10e-9)
+    Returns nodal abscissas {x} and weights {A} of
+    Gauss-Legendre m-point quadrature.
+'''
+def gaussNodes(m,tol=10e-9):
+
+    def legendre(t,m):
+        p0 = 1.0; p1 = t
+        for k in range(1,m):
+            p = ((2.0*k + 1.0)*t*p1 - k*p0)/(1.0 + k )
+            p0 = p1; p1 = p
+        dp = m*(p0 - t*p1)/(1.0 - t**2)
+        return p,dp
+
+    A = np.zeros(m)
+    x = np.zeros(m)
+    nRoots = int((m + 1)/2) # Number of non-neg. roots
+    for i in range(nRoots):
+        t = math.cos(math.pi*(i + 0.75)/(m + 0.5))# Approx. root
+        for j in range(30):
+            p,dp = legendre(t,m) # Newton-Raphson
+            dt = -p/dp; t = t + dt # method
+            if abs(dt) < tol:
+                x[i] = t; x[m-i-1] = -t
+                A[i] = 2.0/(1.0 - t**2)/(dp**2) # Eq.(6.25)
+                A[m-i-1] = A[i]
+                break
+    return x,A
+
+
+## module gaussQuad
+'''
+    I = gaussQuad(f,a,b,m).
+    Computes the integral of f(x) from x = a to b
+    with Gauss-Legendre quadrature using m nodes.
+'''
+def gaussQuad(f,a,b,m):
+    c1 = (b + a)/2.0
+    c2 = (b - a)/2.0
+    x,A = gaussNodes(m)
+    sum = 0.0
+    for i in range(len(x)):
+        sum = sum + A[i]*f(c1 + c2*x[i])
+    return c2*sum
