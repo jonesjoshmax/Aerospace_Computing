@@ -66,10 +66,4 @@ def prob5():
     y = sp.var('y')
     expr = x * y * (2 - (x ** 2)) * (2 - (x * y))
     # printing the integrated function
-    print('The value of this integral is %.5f' % sp.N(sp.integrate(sp.integrate(expr, (x, -3, 3)), (y, -2, 2))))
-
-prob1()
-prob2()
-prob3()
-prob4()
-prob5()
+    print('The value of this integral is %.5f' % sp.N(sp.integrate(sp.integrate(expr, (x, y / 2 - 2, y / 2 + 2)), (y, -2, 2))))
