@@ -766,3 +766,20 @@ def integrate(F,x,y,xStop,h):
         X.append(x)
         Y.append(y)
     return np.array(X),np.array(Y)
+
+def my_fft(xStart, xEnd, y, barWidth=.2, N=500, xLim=50):
+    T = 1 / N
+    x = np.linspace(xStart, xEnd, N, endpoint=False)
+    y_1 = y(x)
+    fig, ax = plt.subplots(1, 2)
+    ax[0].plot(x, y_1)
+    ax[0].set_xlabel('X')
+    ax[0].set_ylabel('Y')
+    amp = abs(np.fft.fft(y_1))[:N // 2]
+    freq = np.fft.fftfreq(N, T)[:N // 2]
+    ax[1].bar(freq, 2 * amp / N, width=barWidth)
+    ax[1].set_xlabel('Frequency')
+    ax[1].set_ylabel('Amplitude')
+    ax[1].set_xlim(0, xLim)
+    plt.show()
+    return
