@@ -31,7 +31,7 @@ def prob2a():
     tf = np.fft.fftfreq(N, T)[:N // 2]
     # Plotting things, Title, Line Width, Labels, Legend, Scale
     lW = 1
-    plt.title('Fourier Transform')
+    plt.title('FFT')
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('SPL (dB)')
     # Plotting the three different FFTs
