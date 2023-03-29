@@ -771,15 +771,20 @@ def my_fft(xStart, xEnd, y, barWidth=.2, N=500, xLim=50):
     T = 1 / N
     x = np.linspace(xStart, xEnd, N, endpoint=False)
     y_1 = y(x)
-    fig, ax = plt.subplots(1, 2)
-    ax[0].plot(x, y_1)
+    fig, ax = plt.subplots(2, 1)
+    ax[0].set_title('Function')
+    ax[0].plot(x, y_1, color='red')
     ax[0].set_xlabel('X')
     ax[0].set_ylabel('Y')
+    ax[0].grid()
     amp = abs(np.fft.fft(y_1))[:N // 2]
     freq = np.fft.fftfreq(N, T)[:N // 2]
-    ax[1].bar(freq, 2 * amp / N, width=barWidth)
+    ax[1].set_title('FFT')
+    ax[1].bar(freq, 2 * amp / N, width=barWidth, color='red')
     ax[1].set_xlabel('Frequency')
     ax[1].set_ylabel('Amplitude')
+    ax[1].grid()
     ax[1].set_xlim(0, xLim)
+    plt.tight_layout()
     plt.show()
     return

@@ -7,3 +7,4 @@ def y(x):
 
 
 cf.my_fft(0, 70, y)
+cf.my_fft(0, 31, y)
