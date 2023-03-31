@@ -12,6 +12,8 @@ data[:, 2] = data[:, 2] - cdo
 
 # Aspect Ratio Max
 n = 10
+aoa = 5
+aoa_ZeroLift = -6
 
 
 def gaussElimin(a, b):
@@ -42,7 +44,7 @@ def PLL(n):
     for i in range(1, x.shape[0] - 1):
         for j in range(x.shape[1]):
             x[i, j] = ((2 * n) / np.pi + (j + 1) / np.sin(theta[i])) * np.sin((j + 1) * theta[i])
-    y = y * 11 * np.pi / 180
+    y = y * (aoa - aoa_ZeroLift) * np.pi / 180
     return gaussElimin(x, y)[0]
 
 
@@ -54,7 +56,7 @@ for r in range(cL.size):
     cD[r] = cL[r] ** 2 / (np.pi * 0.95 * ar[r])
 cL_sim = [data[0, 1], None, None, None, data[1, 1], None, None, data[2, 1], None, None]
 cD_sim = [data[0, 2], None, None, None, data[1, 2], None, None, data[2, 2], None, None]
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6, 2.5))
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 fig.suptitle('Josh Jones - NACA 4812 1,000,000')
 ax1.set_title('Lift Coefficient')
 ax1.set_xlabel('Aspect Ratio')
