@@ -50,7 +50,7 @@ for r in range(cL.size):
     cL[r] = PLL(r + 1) * np.pi * ar[r]
     cD[r] = cL[r] ** 2 / (np.pi * 0.95 * ar[r])
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-fig.suptitle('Josh Jones - NACA 4812 1,000,000')
+fig.suptitle('Josh Jones')
 ax1.set_title('Lift Coefficient')
 ax1.set_xlabel('Aspect Ratio')
 ax1.set_ylabel('cL')
