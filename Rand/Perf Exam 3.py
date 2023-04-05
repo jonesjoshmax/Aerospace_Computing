@@ -2,7 +2,7 @@ import numpy as np
 import sympy as sp
 
 q = sp.var('q')
-k = sp.var('k')
+k = sp.var('i')
 w = sp.var('w')
 s = sp.var('s')
 t = sp.var('t')

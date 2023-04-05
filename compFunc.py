@@ -205,7 +205,7 @@ def gaussSeidel(iterEqs,x,tol = 1.0e-9):
         x = iterEqs(x,omega)
         dx = math.sqrt(np.dot(x-xOld,x-xOld))
         if dx < tol: return x,i,omega
-        # Compute relaxation factor after k+p iterations
+        # Compute relaxation factor after i+p iterations
         if i == k: dx1 = dx
         if i == k + p:
             dx2 = dx
@@ -309,10 +309,10 @@ def rational(xData,yData,x):
 
 ## module cubicSpline
 '''
-    k = curvatures(xData,yData).
+    i = curvatures(xData,yData).
     Returns the curvatures of cubic spline at its knots.
-    y = evalSpline(xData,yData,k,x).
-    Evaluates cubic spline at x. The curvatures k can be
+    y = evalSpline(xData,yData,i,x).
+    Evaluates cubic spline at x. The curvatures i can be
     computed with the function ’curvatures’.
 '''
 def curvatures(xData,yData):
@@ -648,10 +648,10 @@ def forward2_second(f, var, x, diff):
 
 ## module trapezoid
 '''
-    Inew = trapezoid(f,a,b,Iold,k).
+    Inew = trapezoid(f,a,b,Iold,i).
     Recursive trapezoidal rule:
     old = Integral of f(x) from x = a to b computed by
-    trapezoidal rule with 2ˆ(k-1) panels.
+    trapezoidal rule with 2ˆ(i-1) panels.
     Inew = Same integral computed with 2ˆk panels.
 '''
 def trapezoid(f,a,b,Iold,k):
