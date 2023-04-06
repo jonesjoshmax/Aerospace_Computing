@@ -15,6 +15,13 @@ theta = sp.symbols('theta')
 x = (c / 2) * (1 - sp.cos(theta))
 a = sp.symbols('a')
 
+if m == 0 and p == 0:
+    while True:
+        a = np.radians(float(input('AOA Degrees: ')))
+        print('CL, CM4')
+        print('%.5f' % (2 * np.pi * a))
+        print('%.5f' % (-1 / 2 * np.pi * a))
+
 dzdx_front = (2 * m / (p ** 2)) * (p - x)
 dzdx_rear = (2 * m / ((1 - p) ** 2)) * (p - x)
 
@@ -38,5 +45,5 @@ while True:
     print('CL, CM, CM4, X CP')
     print('%.5f' % cl)
     print('%.5f' % cm_le)
-    print('%.5f' % cl)
-    print('%.5f' % cm_le)
+    print('%.5f' % cm_c4)
+    print('%.5f' % x_cp)
