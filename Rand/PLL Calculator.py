@@ -1,19 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-# 4812 1, 4812 5, 4812 8
+# 4412 1, 4412 5, 4412 8
 # LD, CL, CD, CM
-cdo = .01345
-data = np.array([[6.22026, 0.372085, 0.0598146, -0.0295735],
-                 [12.8506, 0.824848, 0.0641876, -0.00944664],
-                 [16.2959, 0.839024, 0.0514868, -0.00575891]])
+cdo = 0.0125555
+data = np.array([[6.35662, 0.313993, 0.049396, -0.0889614],
+                 [14.4362, 0.654088, 0.0453086, -0.112293],
+                 [18.1517, 0.738502, 0.040685, -0.115832]])
 data[:, 2] = data[:, 2] - cdo
 
 # Aspect Ratio Max
 n = 10
 aoa = 5
-aoa_ZeroLift = -6
+aoa_ZeroLift = -4
 
 
 def gaussElimin(a, b):
@@ -57,19 +56,19 @@ for r in range(cL.size):
 cL_sim = [data[0, 1], None, None, None, data[1, 1], None, None, data[2, 1], None, None]
 cD_sim = [data[0, 2], None, None, None, data[1, 2], None, None, data[2, 2], None, None]
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-fig.suptitle('Josh Jones - NACA 4812 1,000,000')
+fig.suptitle('NACA 4412 3,000,000')
 ax1.set_title('Lift Coefficient')
 ax1.set_xlabel('Aspect Ratio')
 ax1.set_ylabel('cL')
 ax1.plot(ar, cL, 'o', color='red', label='cL')
-ax1.plot(ar, cL_sim, 'o', color='blue', label='cL Sim')
+ax1.plot(ar, cL_sim, 'o', color='blue', label='cL airfoiltools.com')
 ax1.legend()
 ax1.grid()
 ax2.set_title('Drag Coefficient')
 ax2.set_xlabel('Aspect Ratio')
 ax2.set_ylabel('cD')
 ax2.plot(ar, cD, 'o', color='red', label='cD')
-ax2.plot(ar, cD_sim, 'o', color='blue', label='cD Sim')
+ax2.plot(ar, cD_sim, 'o', color='blue', label='cD airfoiltools.com')
 ax2.legend()
 ax2.grid()
 fig.tight_layout()
