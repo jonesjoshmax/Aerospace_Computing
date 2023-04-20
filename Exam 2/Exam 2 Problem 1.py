@@ -39,20 +39,25 @@ print('Root:', r1)
 print('Root:', r2)
 print('Root:', r3)
 
+# Creating derivatinve
 expr_der = sp.diff(expr)
 
 print('Part C:')
+# Similar solver and list for derivative values but on the directed values
 x_list = np.arange(0, 2.5, .5)
 for i in range(x_list.size):
+    # printing values
     print('X:', x_list[i], 'Y:{:.6f}'.format(expr_der.subs(x, x_list[i])))
 
 print('Part D:')
+# solving derivative y values for plottting again in another loop
 y_vals = np.zeros(x_vals.size)
 for i in range(x_vals.size):
     y_vals[i] = expr_der.subs(x, x_vals[i])
 
+# same plotting scheme as earlier for the new values
 plt.plot(x_vals, y_vals, color='red')
-plt.title('f(x)')
+plt.title("f'(x)")
 plt.grid()
 plt.xlabel('x')
 plt.ylabel('y')
@@ -60,5 +65,7 @@ plt.tight_layout()
 plt.show()
 
 print('Part E:')
+# integrating across the range
 integral = sp.integrate(expr, (x, 0, .125))
+# printing the value we are returned
 print('The value of the integral is:', round(integral, 6))

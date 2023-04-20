@@ -32,6 +32,8 @@ cm_le = np.zeros(aoa.size)
 for i in range(len(aoa)):
     cl[i] = 2 * np.pi * (aoa[i] - al0)
     cm_le[i] = -1 * ((cl[i] / 4) + ((np.pi / 4) * (a1 - a2)))
+cl = cl * np.pi / 180
+cm_le = cm_le * np.pi / 180
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 fig.suptitle('5% Camber')
 ax1.set_title('Lift Coefficient')
